@@ -5,7 +5,7 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/es/docs/Web/JavaScript)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-**Snake Viper** es una reencarnación moderna y cibernética del clásico juego *Snake*, desarrollada completamente en **HTML5 Canvas, CSS3 y JavaScript vanilla**. Presenta una interfaz retro-futurista con efectos neon glow, curva de dificultad progresiva y soporte nativo para dispositivos móviles.
+**Snake Viper 94** es una reencarnación moderna y cibernética del clásico juego *Snake*, desarrollada completamente en **HTML5 Canvas, CSS3 y JavaScript vanilla**. Presenta una interfaz retro-futurista con efectos neon glow, curva de dificultad progresiva y soporte nativo para dispositivos móviles.
 
 ---
 
