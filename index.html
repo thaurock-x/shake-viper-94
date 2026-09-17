@@ -116,7 +116,6 @@
       transform: scale(1.08);
     }
 
-    /* Controles móviles en grid (D-pad) */
     .mobile-controls {
       display: none;
       grid-template-columns: repeat(3, 60px);
@@ -164,7 +163,7 @@
       }
 
       .controls {
-        display: none; /* Ocultar controles de teclado en móvil */
+        display: none;
       }
 
       .mobile-controls {
@@ -193,7 +192,6 @@
     Pausar: <kbd>Espacio</kbd> &nbsp;|&nbsp; Reiniciar: <kbd>R</kbd>
   </div>
 
-  <!-- Controles táctiles para móvil -->
   <div class="mobile-controls">
     <button id="btnUp">↑</button>
     <button id="btnLeft">←</button>
@@ -236,8 +234,62 @@
 
     highscoreEl.textContent = highScore;
 
+    // ==================== SONIDOS (Web Audio API) ====================
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, duration, type = 'square', volume = 0.15) {
+      if (!audioCtx) return;
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + duration);
+    }
+
+    function playEat() {
+      // Sonido de comer (agudo y corto)
+      playTone(880, 0.08, 'square', 0.12);
+      setTimeout(() => playTone(1320, 0.1, 'square', 0.1), 60);
+    }
+
+    function playGameOver() {
+      // Sonido de muerte (descendente)
+      playTone(440, 0.15, 'sawtooth', 0.2);
+      setTimeout(() => playTone(330, 0.2, 'sawtooth', 0.18), 120);
+      setTimeout(() => playTone(220, 0.3, 'sawtooth', 0.15), 280);
+    }
+
+    function playMove() {
+      // Sonido sutil de movimiento (opcional, muy bajo)
+      // playTone(150, 0.03, 'triangle', 0.04);
+    }
+
+    function playPause() {
+      playTone(600, 0.08, 'sine', 0.1);
+    }
+
     // ==================== INICIALIZACIÓN ====================
     function init() {
+      initAudio(); // Activa el audio al iniciar
+
       snake = [
         { x: 8, y: 10 },
         { x: 7, y: 10 },
@@ -297,6 +349,8 @@
       if (head.x === food.x && head.y === food.y) {
         score += 10;
         scoreEl.textContent = score;
+        playEat(); // ← Sonido de comer
+
         if (score > highScore) {
           highScore = score;
           highscoreEl.textContent = highScore;
@@ -379,10 +433,13 @@
       clearInterval(gameLoop);
       finalScoreEl.textContent = score;
       overlay.style.display = 'flex';
+      playGameOver(); // ← Sonido de game over
     }
 
     // ==================== CONTROLES ====================
     document.addEventListener('keydown', e => {
+      initAudio(); // Asegura que el audio se active con la primera tecla
+
       if (isGameOver && e.key.toLowerCase() === 'r') {
         init();
         return;
@@ -391,6 +448,7 @@
       if (e.key === ' ' || e.code === 'Space') {
         e.preventDefault();
         isPaused = !isPaused;
+        playPause();
         return;
       }
 
@@ -409,6 +467,7 @@
 
     // Botones táctiles
     function setDirection(x, y) {
+      initAudio();
       if (x !== 0 && direction.x === 0) nextDirection = { x, y: 0 };
       if (y !== 0 && direction.y === 0) nextDirection = { x: 0, y };
     }
@@ -418,7 +477,7 @@
     document.getElementById('btnLeft').addEventListener('click', () => setDirection(-1, 0));
     document.getElementById('btnRight').addEventListener('click', () => setDirection(1, 0));
 
-    // Soporte táctil mejorado (evita el retraso del click)
+    // Soporte táctil mejorado
     ['btnUp', 'btnDown', 'btnLeft', 'btnRight'].forEach(id => {
       const btn = document.getElementById(id);
       btn.addEventListener('touchstart', (e) => {
@@ -428,9 +487,13 @@
     });
 
     // Botón reiniciar
-    restartBtn.addEventListener('click', init);
+    restartBtn.addEventListener('click', () => {
+      initAudio();
+      init();
+    });
 
     // ==================== INICIAR ====================
+    // El juego empieza al tocar cualquier botón o tecla (para activar audio en móviles)
     init();
   </script>
 </body>
