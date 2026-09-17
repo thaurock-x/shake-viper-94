@@ -62,3 +62,9 @@ No requiere compilación ni instalación de servidor.
    ```
 ---
 
+### ​📄 Licencia:
+
+<div align="center">
+Desarrollado con 💚 por <strong>Thaurock</strong>
+</div>
+
