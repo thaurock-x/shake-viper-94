@@ -58,7 +58,7 @@ No requiere compilación ni instalación de servidor.
 
 1. **Clona el repositorio:**
    ```bash
-   git clone [https://github.com/thaurock-x/snake-viper-94.git](https://github.com/thaurock-x/snake-viper-94.git)
-
+   git clone https://github.com/thaurock-x/snake-viper-94.git
+   ```
 ---
 
